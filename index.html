@@ -1,0 +1,976 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+<title>Scaffold Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Playball&family=Rubik:wght@400;600&display=swap">
+<style>
+/* Layout: 1280px content column on a 1440 canvas, sections stacked as in the Figma page */
+:root{
+  color-scheme: light;
+  --ink:#212529; --text:#333333; --muted:#6a6a72; --line:#e3e3e8;
+  --cream:#fbf7ef; --night:#151618; --night2:#101214; --navy:#1b2737;
+  --purple:#8224e3; --purple-d:#6d17c7; --yellow:#fff66e; --lime:#d5f25c; --olive:#6b6100;
+  --blue:#007bff; --bubble:#3d72f5; --red:#e5484d; --grey:#f6f6f7;
+  --sans:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --script:"Playball", "Brush Script MT", cursive;
+  --fcg:"Rubik", "Helvetica Neue", Arial, sans-serif;
+  --wrap:1280px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#fff;color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+img{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.wrap{max-width:calc(var(--wrap) + 32px);margin:0 auto;padding-left:16px;padding-right:16px}
+.script{font-family:var(--script);font-weight:400;letter-spacing:0}
+.y{color:var(--yellow)} .ol{color:var(--olive)}
+h1,h2,h3{font-weight:500;margin:0;text-wrap:balance}
+h2.big{font-size:clamp(34px,4.2vw,50px);line-height:1.12;letter-spacing:-.02em}
+p{margin:0}
+.eyebrow{display:flex;align-items:center;gap:8px;font-size:16px;margin-bottom:12px}
+.eyebrow svg{width:14px;height:14px;flex:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;padding:0 32px;border-radius:54px;font-weight:500;font-size:18px;transition:background .2s, transform .2s}
+.btn:active{transform:scale(.98)}
+.btn-p{background:var(--purple);color:#fff}.btn-p:hover{background:var(--purple-d)}
+.btn-w{background:#fff;color:var(--ink)}.btn-w:hover{background:#f0f0f0}
+.btn-k{background:#141416;color:#fff}.btn-k:hover{background:#333}
+.btn-sm{height:44px;font-size:16px;padding:0 24px}
+section{position:relative}
+.view[hidden]{display:none!important}
+
+/* FCG site menu */
+.fcg{background:#fff;border-bottom:1px solid #eee}
+.fcg .top{display:flex;align-items:center;justify-content:space-between;padding-block:20px 6px}
+.fcg .logo{width:96px}
+.fcg .search{display:flex;align-items:center;width:250px;height:34px;border:1px solid #cfcfd4;border-radius:4px;padding:0 10px;justify-content:flex-end}
+.fcg nav{display:flex;align-items:center;justify-content:space-between;font-family:var(--fcg);font-weight:600;font-size:15px;padding-block:14px 22px;gap:16px}
+.fcg nav a{text-decoration:none;white-space:nowrap}
+.fcg .burger{width:24px;height:18px;display:flex;flex-direction:column;justify-content:space-between}
+.fcg .burger i{display:block;height:2px;background:#141416;border-radius:2px}
+@media (max-width:900px){.fcg nav a{display:none}.fcg nav{justify-content:flex-end;padding-block:0 14px;margin-top:-34px}.fcg .search{display:none}}
+
+/* Banner */
+.banner{background:var(--yellow);height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#141416;overflow:hidden}
+.banner .word{display:flex;align-items:center;gap:20px;font-weight:600;font-size:52px;letter-spacing:-.04em;line-height:1}
+.banner .word svg{width:26px;height:26px}
+.banner .tag{display:flex;align-items:baseline;gap:6px;margin-top:2px}
+.banner .tag .script{font-size:13px}
+.banner .tag b{font-weight:600;font-size:10.5px;letter-spacing:.06em}
+.banner .sp{position:absolute;color:#141416}
+.banner svg{transform-box:fill-box;transform-origin:center;animation:tw 2.8s ease-in-out infinite}
+.banner .word svg:last-child{animation-delay:1.4s}
+.banner .sp:nth-of-type(1){animation-delay:.4s;animation-duration:3.2s}
+.banner .sp:nth-of-type(2){animation-delay:1.8s;animation-duration:2.6s}
+.banner .sp:nth-of-type(3){animation-delay:.9s;animation-duration:3.4s}
+.banner .sp:nth-of-type(4){animation-delay:2.3s;animation-duration:3s}
+@keyframes tw{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.72)}}
+@media (max-width:600px){.banner{height:110px}.banner .word{font-size:44px}.banner .sp{display:none}}
+
+/* Hero */
+.hero{min-height:836px;color:#fff;display:flex;align-items:flex-end;background:#222 url(img/hero.jpg) center/cover no-repeat}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.5) 50%,rgba(0,0,0,.72) 100%)}
+.hero .wrap{position:relative;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end;padding-block:0 112px}
+.hero .ey{display:flex;align-items:center;gap:8px;color:var(--yellow);font-size:14px;margin-bottom:6px}
+.hero h1{font-size:clamp(38px,4vw,48px);line-height:1.12;letter-spacing:-.02em;font-weight:400}
+.hero h2{font-size:clamp(28px,3vw,36px);font-weight:400;letter-spacing:-.02em;margin-bottom:12px}
+.hero p{color:#f8f1f1;max-width:440px}
+.hero .ctas{display:flex;gap:16px;margin-top:28px;flex-wrap:wrap}
+.hero .btn{height:44px;font-size:16px;padding:0 24px;min-width:162px}
+@media (max-width:860px){.hero{min-height:720px}.hero .wrap{grid-template-columns:1fr;padding-block:0 56px;gap:28px}}
+
+/* Shared: image fan carousel (The moment / More than money) */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+@media (max-width:900px){.split{grid-template-columns:1fr;gap:40px}}
+.fan{position:relative;height:363px;max-width:480px;margin:0 auto;width:100%}
+.fan .c{position:absolute;left:50%;top:50%;overflow:hidden;border-radius:10px;transition:transform .6s cubic-bezier(.2,.7,.2,1),width .6s cubic-bezier(.2,.7,.2,1),height .6s cubic-bezier(.2,.7,.2,1),filter .6s,opacity .6s;cursor:pointer;background:#ddd}
+.fan .c img{width:100%;height:100%;object-fit:cover}
+.fan .c .tag{position:absolute;left:50%;bottom:14px;transform:translateX(-50%) translateY(8px);opacity:0;transition:opacity .35s .25s, transform .35s .25s;white-space:nowrap}
+.fan .c.p0 .tag{opacity:1;transform:translateX(-50%)}
+.fan .p0{width:236px;height:363px;transform:translate(-50%,-50%);z-index:5;border-radius:4px}
+.fan .p1{width:167px;height:311px;transform:translate(calc(-50% + 108px),-50%);z-index:4}
+.fan .p4{width:167px;height:311px;transform:translate(calc(-50% - 108px),-50%);z-index:4}
+.fan .p2{width:137px;height:259px;transform:translate(calc(-50% + 171px),-50%);z-index:3;filter:blur(3px);opacity:.85}
+.fan .p3{width:137px;height:259px;transform:translate(calc(-50% - 171px),-50%);z-index:3;filter:blur(3px);opacity:.85}
+@media (max-width:420px){.fan{transform:scale(.8);transform-origin:center}}
+.tag{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:8px;font-size:13px;font-weight:600;background:var(--yellow);color:#3d5a12}
+.tag svg{width:14px;height:14px}
+.tag.lime{background:var(--lime)} .tag.lilac{background:#ece4ff;color:#6b3fe0}
+.dots{display:flex;gap:4px;justify-content:center;margin:18px auto 0;padding:6px 8px;background:#f2f2f4;border-radius:10px;width:max-content}
+.dots button{width:6px;height:6px;border-radius:50%;background:#c8c8cf;padding:0}
+.dots button.on{background:var(--purple)}
+.panel{background:var(--grey);border-radius:12px;padding:28px 32px 20px}
+.panel .slides{display:grid}
+.panel .slide{grid-area:1/1;opacity:0;transform:translateX(16px);transition:opacity .4s, transform .4s;pointer-events:none}
+.panel .slide.on{opacity:1;transform:none;pointer-events:auto}
+.ctrl{display:flex;align-items:center;justify-content:space-between;margin-top:22px}
+.prog{display:flex;align-items:center;gap:4px}
+.prog i{display:block;width:4px;height:4px;border-radius:2px;background:#c8c8cf;transition:width .3s, background .3s}
+.prog i.on{width:28px;background:#141416}
+.arrows{display:flex;gap:14px}
+.arr{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;transition:background .2s}
+.arr svg{width:12px;height:12px}
+.arr:disabled{background:#e4e4e8;color:#aaa;cursor:default}
+
+/* The moment */
+.moment{padding-block:120px}
+.moment h2{font-size:clamp(40px,4.2vw,50px);letter-spacing:-.02em}
+.moment .sub{color:var(--text);margin-top:14px}
+.moment .small{color:#777;font-size:14px;margin-top:14px;max-width:440px}
+.moment .panel{margin-top:28px;max-width:560px}
+.moment .panel p{font-size:18px;line-height:1.5}
+
+/* What Scaffold is / Award: tilted photo stack */
+.cream{background:var(--cream) radial-gradient(120% 80% at 70% 20%,rgba(255,255,255,.7),transparent 60%)}
+.what{padding-block:100px}
+.what .txt p{color:var(--text);font-size:18px;line-height:1.5}
+.what .txt p + p{margin-top:18px}
+.what .note{color:#473f01!important;font-size:16px!important}
+.what .lbl{font-weight:600;font-size:14px!important;margin-bottom:-10px}
+.what .btn{margin-top:32px}
+.stack{position:relative;height:440px;max-width:460px;margin:0 auto;width:100%;touch-action:pan-y;user-select:none}
+.stack .s{position:absolute;left:50%;top:50%;width:380px;height:228px;max-width:88%;border-radius:14px;overflow:hidden;border:5px solid #fff;box-shadow:0 18px 40px rgba(40,30,10,.16);background:#ddd;transition:transform .7s cubic-bezier(.2,.7,.2,1),opacity .5s;cursor:grab}
+.stack .s:active{cursor:grabbing}
+.stack .s img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.stack .bub{position:absolute;z-index:20;left:4%;top:22%;background:var(--bubble);color:#fff;font-weight:500;font-size:15px;padding:7px 14px;border-radius:12px;pointer-events:none}
+.stack .bub::after{content:"";position:absolute;left:6px;bottom:-5px;width:12px;height:12px;border-radius:50%;background:var(--bubble)}
+.stack .tg{position:absolute;z-index:20;right:6%;bottom:27%;pointer-events:none}
+
+/* Who should apply */
+.who{background:var(--night);color:#fff;padding-block:100px}
+.who .head{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end;margin-bottom:48px}
+.who .head p{color:#f2f3fc;font-size:18px;max-width:500px;justify-self:end}
+@media (max-width:860px){.who .head{grid-template-columns:1fr}.who .head p{justify-self:start}}
+.crit{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.crit{grid-template-columns:1fr}}
+.cc{position:relative;height:640px;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08);cursor:default}
+.cc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s}
+.cc::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.08);transition:background .45s;z-index:1}
+.cc .cin{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:space-between;padding:40px 40px 48px}
+.cc .lab{font-size:16px}
+.cc h3{font-size:24px;font-weight:400;transition:margin .45s}
+.cc ul{list-style:none;padding:0;margin:0;display:grid;gap:18px;max-height:0;opacity:0;overflow:hidden;transition:max-height .5s, opacity .35s, margin .45s}
+.cc li{display:flex;gap:12px;color:#f2f3fc;max-width:380px}
+.cc li svg{flex:none;width:24px;height:24px}
+.cc.on::before{background:rgba(10,10,12,.72)}
+.cc.on ul{max-height:420px;opacity:1;margin-top:26px}
+.cc.on img{transform:scale(1.03)}
+@media (max-width:860px){.cc{height:560px}.cc .cin{padding:28px}}
+
+/* How it works */
+.how{padding-block:110px;overflow:hidden}
+.how .head{text-align:center;margin-bottom:56px}
+.how .eyebrow{justify-content:center}
+.track{margin-right:calc((100% - 100vw) / 2);padding-right:16px;display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px;scroll-behavior:smooth}
+.track::-webkit-scrollbar{display:none}
+.hc{flex:0 0 412px;max-width:86vw;scroll-snap-align:start;background:#f1f1f3;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.hc .box{background:#fafafa;border-radius:12px;padding:20px;flex:1;min-height:228px}
+.hc h3{font-size:24px;font-weight:400;margin-bottom:8px}
+.hc p{color:var(--text);font-size:18px;line-height:1.4}
+.hc img{height:216px;width:100%;object-fit:cover;border-radius:12px}
+.how .ctrl{margin-top:36px}
+
+/* More than money */
+.money{background:#f7f7f7;padding-block:120px}
+.money .panel{background:#fff;margin-top:28px;max-width:560px}
+.money .panel h3{font-size:24px;font-weight:400;margin-bottom:12px}
+.money .panel p{color:var(--text)}
+.money .btn{margin-top:28px}
+
+/* Who is behind it */
+.behind{background:var(--night2);color:#fff;padding-block:130px}
+.behind .g{display:grid;grid-template-columns:420px 1fr;gap:64px}
+@media (max-width:900px){.behind .g{grid-template-columns:1fr;gap:28px}}
+.behind .lead{font-size:24px;line-height:1.35}
+.behind .lead .script{font-size:26px}
+.behind .pics{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
+@media (max-width:600px){.behind .pics{grid-template-columns:1fr}}
+.behind .pics img{height:270px;width:100%;object-fit:cover;border-radius:12px}
+.behind .pics p{color:#f2f3fc;font-size:16px;margin-top:24px;max-width:340px}
+
+/* Key dates */
+.dates{background:var(--navy) linear-gradient(125deg,rgba(0,123,255,.18),rgba(0,123,255,0) 60%);color:#fff;padding-block:110px}
+.dates .g{display:grid;grid-template-columns:427px 1fr;gap:110px;align-items:start}
+@media (max-width:900px){.dates .g{grid-template-columns:1fr;gap:40px}}
+.dates img{width:100%;height:296px;object-fit:cover;border-radius:12px;margin-top:40px}
+.rows{list-style:none;margin:0;padding:0}
+.rows li{display:grid;grid-template-columns:60px 1fr 220px;align-items:center;padding:26px 0;border-bottom:1px solid rgba(255,255,255,.14)}
+.rows li:first-child{border-top:1px solid rgba(255,255,255,.14)}
+.rows .n{opacity:.7}
+.rows .t{font-size:20px}
+.rows .d{display:flex;gap:8px;align-items:center;opacity:.85}
+.rows .d svg{width:18px;height:18px}
+@media (max-width:600px){.rows li{grid-template-columns:36px 1fr;row-gap:6px}.rows .d{grid-column:2}}
+
+/* FAQ */
+.faq{padding-block:110px}
+.faq .g{display:grid;grid-template-columns:400px 1fr 200px;gap:48px;align-items:start}
+@media (max-width:1000px){.faq .g{grid-template-columns:1fr}}
+.faq .eyebrow{color:#5c5c63}
+.acc{border-top:0}
+.qa{border-bottom:1px solid #e4e0d6;border-radius:0;transition:background .3s, border-radius .3s}
+.qa.open{background:#fff;border-radius:10px;border-color:transparent}
+.qa button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;text-align:left;padding:22px 16px;font-size:20px;color:var(--ink)}
+.qa .ic{position:relative;width:16px;height:16px;flex:none}
+.qa .ic::before,.qa .ic::after{content:"";position:absolute;left:0;top:7px;width:16px;height:1.6px;background:#141416;transition:transform .3s}
+.qa .ic::after{transform:rotate(90deg)}
+.qa.open .ic::after{transform:rotate(0)}
+.qa .ans{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s}
+.qa.open .ans{grid-template-rows:1fr}
+.qa .ans > div{overflow:hidden}
+.qa .ans p{padding:0 56px 20px 16px;color:var(--text)}
+.qa.open button{padding-bottom:10px}
+.help p{font-weight:500;font-size:18px;line-height:1.35}
+.help .btn{margin-top:16px;width:180px}
+.help small{display:block;margin-top:10px;color:var(--muted);font-size:13px;min-height:18px}
+
+/* Partners */
+.partners{color:#fff;text-align:center;padding-block:150px;background:#121416 url(img/partners.jpg) center/cover}
+.partners::before{content:"";position:absolute;inset:0;background:rgba(10,11,13,.82)}
+.partners .wrap{position:relative;max-width:760px}
+.partners .eyebrow{justify-content:center;color:#f2f3fc}
+.partners h2{font-size:clamp(36px,4.4vw,60px);line-height:1.08;letter-spacing:-.02em}
+.partners p{color:#f2f3fc;font-size:18px;margin-top:20px}
+.partners .btn{margin-top:40px}
+
+/* CTA globe */
+.cta{padding-block:70px}
+.cta.cream{background:#fbf7f0}
+.cta .g{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
+@media (max-width:900px){.cta .g{grid-template-columns:1fr}}
+.globe{animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px)}}
+.cta p{color:var(--text);font-size:18px;margin-top:16px;max-width:410px}
+.cta .btn{margin-top:28px}
+.cta small{display:block;margin-top:28px;color:var(--text);font-size:14px;max-width:300px;line-height:1.6}
+
+/* Footer */
+.foot{background:#000 url(img/footer.jpg) center bottom/cover no-repeat;color:#fff;font-family:var(--fcg);min-height:666px;padding-block:90px 40px;display:flex;flex-direction:column}
+.foot .g{display:grid;grid-template-columns:1.25fr .9fr .6fr;gap:48px}
+@media (max-width:800px){.foot .g{grid-template-columns:1fr}}
+.foot .about{max-width:400px;text-align:justify}
+.foot h4{font-size:20px;font-weight:600;margin:0 0 16px}
+.foot ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.foot .copy{text-align:center;margin-top:auto;padding-top:60px}
+
+/* ===== Apply ===== */
+.ap{background:var(--cream);min-height:100vh}
+.ap-bar{border-bottom:1px solid #ebe5d8}
+.ap-bar .wrap{display:flex;justify-content:space-between;align-items:center;height:76px}
+.wm{display:flex;flex-direction:column;line-height:1;text-decoration:none}
+.wm b{font-weight:600;font-size:24px;color:var(--olive);letter-spacing:-.02em}
+.wm span{font-size:11px;color:var(--text);margin-top:4px}
+.back{text-decoration:none;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:500}
+.back svg{width:14px;height:14px}
+.ap-main{display:grid;grid-template-columns:400px 1fr;gap:100px;padding-block:72px 120px;align-items:start}
+@media (max-width:1000px){.ap-main{grid-template-columns:1fr;gap:36px;padding-block:40px 80px}}
+.ap-side{position:sticky;top:24px}
+@media (max-width:1000px){.ap-side{position:static}}
+.ap-side h1{font-size:clamp(34px,4vw,44px);font-weight:400;letter-spacing:-.02em;line-height:1.15}
+.ap-side .intro{color:#555;margin-top:18px}
+.steps{list-style:none;margin:36px 0 0;padding:0}
+.steps li{display:flex;gap:14px;position:relative;padding-bottom:22px}
+.steps li:not(:last-child)::after{content:"";position:absolute;left:15px;top:34px;bottom:4px;width:1px;background:#d9d4c8}
+.steps .num{width:31px;height:31px;border-radius:50%;border:1px solid #d9d4c8;display:grid;place-items:center;font-size:13px;color:#999;background:var(--cream);flex:none}
+.steps b{display:block;font-weight:500;color:#999}
+.steps small{color:#999;font-size:13px}
+.steps .cur .num{border:1.5px solid #141416;color:#141416}
+.steps .cur b{color:var(--ink)}.steps .cur small{color:#666}
+.steps .done .num{background:#26262b;border-color:#26262b;color:#fff}
+.steps .done b{color:var(--ink)}.steps .done small{color:#666}
+@media (max-width:1000px){.steps{display:none}}
+.ap-info{border-top:1px solid #e3ddd0;margin-top:14px;padding-top:24px;font-size:15px;color:var(--text)}
+.ap-info a{font-weight:600;text-decoration:none}
+.card{background:#fff;border-radius:20px;padding:40px;box-shadow:0 10px 40px rgba(60,40,10,.06);max-width:700px}
+@media (max-width:600px){.card{padding:24px 20px}}
+.bars{display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:10px}
+.bars b{color:var(--purple);font-weight:500}
+.bar3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:36px}
+.bar3 i{height:3px;border-radius:2px;background:#e8e8ec;transition:background .4s}
+.bar3 i.on{background:var(--purple)}
+.card h2{font-size:24px;font-weight:500}
+.card .lead{color:#555;font-size:15px;margin-top:6px;margin-bottom:28px}
+.fs{display:grid;gap:22px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:600px){.row2{grid-template-columns:1fr}}
+.f > label,.f .lb{display:block;font-weight:500;font-size:14px;margin-bottom:8px;color:#26262b}
+.f > label em,.f .lb em{color:var(--red);font-style:normal}
+.f > label i,.f .lb i{color:#8a8a92;font-style:normal;font-weight:400}
+.in,.sel,.ta{width:100%;height:46px;border:1px solid var(--line);border-radius:10px;padding:0 14px;font:inherit;font-size:15px;color:var(--ink);background:#fff;transition:border-color .2s, box-shadow .2s}
+.in::placeholder,.ta::placeholder{color:#a0a0a8}
+.in:focus,.sel:focus,.ta:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(130,36,227,.12)}
+.sel{appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2326262b' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 16px center no-repeat;color:var(--ink)}
+.sel:invalid{color:#a0a0a8}
+.ta{height:110px;padding:12px 14px;resize:vertical}
+.wi{position:relative}.wi svg{position:absolute;left:14px;top:15px;width:15px;height:15px;color:#8a8a92}.wi .in{padding-left:36px}
+.hintx{font-size:12px;color:#8a8a92;margin-top:7px;display:flex;justify-content:space-between}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;cursor:pointer;transition:border-color .2s, background .2s}
+.pill input{accent-color:var(--purple);margin:0}
+.pill:has(input:checked){border-color:var(--purple);background:#f7f0ff}
+.opt2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:600px){.opt2{grid-template-columns:1fr}}
+.opt{display:flex;gap:10px;border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;transition:border-color .2s, background .2s}
+.opt input{accent-color:var(--purple);margin-top:3px}
+.opt b{display:block;font-weight:500;font-size:14px}.opt small{color:#8a8a92;font-size:12px}
+.opt:has(input:checked){border-color:var(--purple);background:#f7f0ff}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}
+.chk input{accent-color:var(--purple);width:16px;height:16px;margin:2px 0 0}
+.chk em{color:var(--red);font-style:normal}
+.drop{border:1.5px dashed #d7d7de;border-radius:12px;padding:22px;text-align:center;font-size:14px;color:#555;cursor:pointer;transition:border-color .2s, background .2s;display:block}
+.drop:hover{border-color:var(--purple);background:#fcf9ff}
+.drop u{color:var(--purple)}
+.drop small{display:block;color:#8a8a92;font-size:12px;margin-top:4px}
+.or{display:flex;align-items:center;gap:12px;color:#8a8a92;font-size:12px;margin:12px 0}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.cf{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:32px;flex-wrap:wrap}
+.cf small{color:#8a8a92;font-size:12px}
+.btn-o{border:1px solid #d4d4da;background:#fff;color:var(--ink)}.btn-o:hover{background:#f5f5f7}
+.cf .btn{height:44px;font-size:16px;padding:0 22px}
+.cf .grow{display:flex;gap:12px;margin-left:auto}
+.sent{max-width:620px;margin:0 auto;text-align:left}
+.sent .ok{width:52px;height:52px;border-radius:50%;background:#f1e7fd;color:var(--purple);display:grid;place-items:center;margin-bottom:22px}
+.sent h1{font-size:clamp(32px,4vw,40px);font-weight:400;letter-spacing:-.02em}
+.sent .lead{margin-bottom:30px}
+.next{list-style:none;padding:0;margin:14px 0 32px;display:grid;gap:18px}
+.next li{display:flex;gap:14px}
+.next .num{width:28px;height:28px;border-radius:50%;background:#26262b;color:#fff;display:grid;place-items:center;font-size:13px;flex:none}
+.next b{font-weight:500;display:block}.next small{color:#666}
+.err{color:var(--red);font-size:12px;margin-top:6px;display:none}
+.f.bad .in,.f.bad .sel{border-color:var(--red)} .f.bad .err{display:block}
+
+/* ===== Partner modal ===== */
+.ov{position:fixed;inset:0;z-index:100;background:rgba(10,10,12,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:32px 16px;opacity:0;pointer-events:none;transition:opacity .3s}
+.ov.on{opacity:1;pointer-events:auto}
+.md{background:#fff;border-radius:20px;width:100%;max-width:680px;height:min(640px,calc(100vh - 64px));position:relative;display:flex;flex-direction:column;overflow:hidden;transform:translateY(24px) scale(.98);transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.ov.on .md{transform:none}
+.md h2{font-size:24px;font-weight:500}
+.md .lead{color:#555;font-size:14px;margin:6px 0 0}
+#pm-form{display:flex;flex-direction:column;height:100%;min-height:0}
+.mh{padding:28px 32px 18px;border-bottom:1px solid #ececf0;flex:none}
+.mb{flex:1;min-height:0;overflow-y:auto;padding:22px 32px 26px;overscroll-behavior:contain}
+.mb .fs{gap:18px}
+.mb::-webkit-scrollbar{width:8px}.mb::-webkit-scrollbar-thumb{background:#dcdce2;border-radius:8px}
+.mb-fade{position:relative}
+
+.x{position:absolute;right:24px;top:24px;z-index:2;width:32px;height:32px;border-radius:50%;background:#f0f0f2;display:grid;place-items:center}
+.x svg{width:14px;height:14px}
+.mf{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #ececf0;padding:16px 32px;gap:16px;flex-wrap:wrap;flex:none;background:#fff}
+.mf small{display:block;color:#8a8a92;font-size:12px}
+.mf b{font-weight:500;font-size:14px}
+.mf .btn{height:44px;font-size:16px;padding:0 22px}
+@media (max-width:600px){.ov{padding:0;align-items:flex-end}.md{border-radius:20px 20px 0 0;height:88vh;max-width:none}.mh{padding:22px 20px 14px}.mb{padding:18px 20px 22px}.mf{padding:14px 20px;flex-direction:column-reverse;align-items:stretch;gap:10px}.mf .btn{width:100%}}
+.md .done{text-align:center;padding:40px 32px;margin:auto 0}
+.md .done .ok{width:52px;height:52px;border-radius:50%;background:#f1e7fd;color:var(--purple);display:grid;place-items:center;margin:0 auto 18px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#141416;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .3s, transform .3s;z-index:200;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="spark" viewBox="0 0 16 16"><path d="M8 0C8.4 4.27 11.73 7.6 16 8 11.73 8.4 8.4 11.73 8 16 7.6 11.73 4.27 8.4 0 8 4.27 7.6 7.6 4.27 8 0Z" fill="currentColor"/></symbol>
+  <symbol id="chk" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3a3a3f"/><path d="M8.5 12.5l2 2 5-5" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="left" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="arrowr" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="arrowl" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" fill="currentColor"/></symbol>
+  <symbol id="mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" fill="currentColor"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></symbol>
+  <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></symbol>
+  <symbol id="close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="tick" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<!-- ================= LANDING ================= -->
+<div class="view" id="v-home">
+
+<header class="fcg">
+  <div class="wrap">
+    <div class="top">
+      <img class="logo" src="img/fcg-logo.png" alt="For Creative Girls">
+      <div class="search"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="#141416" stroke-width="2.6" fill="none"/><path d="m16.5 16.5 4 4" stroke="#141416" stroke-width="2.6" stroke-linecap="round"/></svg></div>
+    </div>
+    <nav aria-label="For Creative Girls">
+      <a href="#v-home">2026 Mentorship</a><a href="#v-home">Donate to Us</a><a href="#v-home">Opportunities</a><a href="#v-home">Interviews</a><a href="#v-home">Creative Women &amp; Projects</a><a href="#v-home">Opinions &amp; Lessons</a><a href="#v-home">Business</a><a href="#v-home">About Us</a>
+      <span class="burger" aria-label="Menu"><i></i><i></i><i></i></span>
+    </nav>
+  </div>
+</header>
+
+<div class="banner" style="position:relative">
+  <svg class="sp" style="left:8.3%;top:28px;width:12px;height:12px"><use href="#spark"/></svg>
+  <svg class="sp" style="left:15.3%;top:58px;width:8px;height:8px"><use href="#spark"/></svg>
+  <svg class="sp" style="right:12%;top:30px;width:10px;height:10px"><use href="#spark"/></svg>
+  <svg class="sp" style="right:7.5%;top:62px;width:13px;height:13px"><use href="#spark"/></svg>
+  <div class="word"><svg><use href="#spark"/></svg>Scaffold<svg><use href="#spark"/></svg></div>
+  <div class="tag"><span class="script">a programme by</span><b>FOR CREATIVE GIRLS</b></div>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="ey"><svg width="14" height="14" style="color:var(--yellow)"><use href="#spark"/></svg>A programme by For Creative Girls</div>
+      <h1>You are <span class="script y">building</span> the<br>creative economy.</h1>
+    </div>
+    <div>
+      <h2>We want to build around <span class="script y">you</span>.</h2>
+      <p>Scaffold is a six-week accelerator for women building products for the creative economy. Twenty come in with something already in their hands. The strongest leave investment-ready, with a pitch in front of people who can back them.</p>
+      <div class="ctas">
+        <button class="btn btn-w" data-scroll="how">See how it works</button>
+        <button class="btn btn-p" data-apply>Apply</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- The moment -->
+<section class="moment">
+  <div class="wrap split">
+    <div>
+      <div class="fan" data-fan="moment"></div>
+      <div class="dots" data-dots="moment"></div>
+    </div>
+    <div>
+      <h2>The moment</h2>
+      <p class="sub">The tools of the creative economy are being rebuilt.<br>Women are building them, with almost no capital behind them.</p>
+      <p class="small">Scaffold exist to close the gap for a small group of women at a time, and do it properly</p>
+      <div class="panel" data-panel="moment">
+        <div class="slides">
+          <div class="slide on"><p>A new generation of products is being made for how creative work gets done, how it gets seen, and how it gets paid for. Women are among the people building them, often as the founder, often on a laptop, often alone.</p></div>
+          <div class="slide"><p>The support thins out exactly where it matters most. Early-stage women in the creative space are the least likely to reach the funding, the readiness, and the networks that turn a working product into a company. In 2025, female-founded startups took just ten percent of the equity funding raised across Africa, and male-founded companies raised, on average, several times more.</p></div>
+        </div>
+        <div class="ctrl"><div class="prog"></div><div class="arrows"><button class="arr" data-prev aria-label="Previous"><svg><use href="#left"/></svg></button><button class="arr" data-next aria-label="Next"><svg><use href="#right"/></svg></button></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- What Scaffold is -->
+<section class="what cream" id="what">
+  <div class="wrap split">
+    <div class="txt">
+      <div class="eyebrow"><svg><use href="#spark" style="color:#141416"/></svg>What Scaffold is</div>
+      <h2 class="big" style="margin-bottom:24px">A six-week accelerator for women already <span class="script ol">building</span></h2>
+      <p>Scaffold takes in up to twenty women who are building a product for the creative economy and already have something real, a working version, early users, a first version of the idea made tangible. Over six focused weeks, we help them sharpen the product, understand their market, and get ready to raise. At the end, we recognise the five strongest, and the whole cohort pitches to investors on demo day.</p>
+      <p class="note">It is deliberately small. We would rather go deep with a few women than spread ourselves thin across many.</p>
+      <p class="lbl">What the name means</p>
+      <p>A scaffold is the structure that holds a builder while she builds, and comes down once the thing can stand on its own. That is the role we play. We are not the product. We are what goes up around her while she makes it.</p>
+      <button class="btn btn-p" data-apply>Build with us</button>
+    </div>
+    <div>
+      <div class="stack" data-stack="what" data-imgs="what1,what2,what3,what4,what5">
+        <span class="bub">Something real</span>
+        <span class="tg tag"><svg><use href="#wrench"/></svg>Already building</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Who should apply -->
+<section class="who" id="who">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <div class="eyebrow" style="color:#fcfcfc"><svg style="color:#fff"><use href="#spark"/></svg>Who should apply</div>
+        <h2 class="big">This is for you if you are already <span class="script y">building</span>.</h2>
+      </div>
+      <p>Scaffold is for women building a product for the creative economy. That means a product, not only an idea. You do not need funding, a team, or traction to apply, but you do need to have started making the thing.</p>
+    </div>
+    <div class="crit" id="crit">
+      <article class="cc on" tabindex="0">
+        <img src="img/crit1.jpg" alt="">
+        <div class="cin">
+          <span class="lab">Criteria 1</span>
+          <div>
+            <h3>You are a fit if</h3>
+            <ul>
+              <li><svg><use href="#chk"/></svg>You are a woman building a product, platform, or tool for the creative economy.</li>
+              <li><svg><use href="#chk"/></svg>You already have a working version, even a rough one, or real early users.</li>
+              <li><svg><use href="#chk"/></svg>You are serious about turning what you have built into a business.</li>
+              <li><svg><use href="#chk"/></svg>You can commit to six weeks of focused work.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+      <article class="cc" tabindex="0">
+        <img src="img/crit2.jpg" alt="">
+        <div class="cin">
+          <span class="lab">Criteria 2</span>
+          <div>
+            <h3>This is probably not the right moment if</h3>
+            <ul>
+              <li><svg><use href="#chk"/></svg>You have an idea but have not started building yet.</li>
+              <li><svg><use href="#chk"/></svg>You are looking for a grant with no programme attached.</li>
+              <li><svg><use href="#chk"/></svg>You cannot give the six weeks the time they need.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow"><svg style="color:#141416"><use href="#spark"/></svg>How it works</div>
+      <h2 class="big">Six weeks built<br>backwards from the pitch</h2>
+    </div>
+    <div class="track" id="track">
+      <div class="hc"><div class="box"><h3>Apply</h3><p>Applications open in January 2027. Tell us what you are building and where you are with it. We read every one.</p></div><img src="img/how1.jpg" alt=""></div>
+      <div class="hc"><div class="box"><h3>Get selected</h3><p>We choose up to twenty women on clear signals: you are already building, you have something real, and you are ready to move.</p></div><img src="img/how2.jpg" alt=""></div>
+      <div class="hc"><div class="box"><h3>Build (weeks one to four)</h3><p>Focused sessions on product, your market, pricing, and telling your story, with mentors who have done it and a success manager keeping you on track. You test what you are building with real audiences and come back with what you learned.</p></div><img src="img/how3.jpg" alt=""></div>
+      <div class="hc"><div class="box"><h3>Get ready to raise (weeks five to six)</h3><p>An investment-readiness track, run with our partner Frontier Access, so that what you show on pitch day is prepared, not raw.</p></div><img src="img/how4.jpg" alt=""></div>
+      <div class="hc"><div class="box"><h3>Pitch</h3><p>The cohort pitches to investors and partners. The strongest founders are backed, and every founder leaves in front of people who can take them further.</p></div><img src="img/how5.jpg" alt=""></div>
+    </div>
+    <div class="ctrl"><div class="prog" id="howprog"></div><div class="arrows"><button class="arr" id="howprev" aria-label="Previous"><svg><use href="#left"/></svg></button><button class="arr" id="hownext" aria-label="Next"><svg><use href="#right"/></svg></button></div></div>
+  </div>
+</section>
+
+<!-- More than money -->
+<section class="money">
+  <div class="wrap split">
+    <div>
+      <div class="fan" data-fan="money"></div>
+      <div class="dots" data-dots="money"></div>
+    </div>
+    <div>
+      <div class="eyebrow"><svg style="color:#141416"><use href="#spark"/></svg>What you get</div>
+      <h2 class="big">More than money</h2>
+      <p style="color:var(--text);margin-top:10px">The things a product actually needs to grow.</p>
+      <div class="panel" data-panel="money">
+        <div class="slides">
+          <div class="slide on" data-cta="Meet your mentors"><h3>Expertise</h3><p>Mentors and operators who have built, sold, and raised, giving you real guidance on the decisions in front of you.</p></div>
+          <div class="slide" data-cta="Test your product"><h3>Users</h3><p>A chance to test what you are building with real creative audiences, and come back with what they told you.</p></div>
+          <div class="slide" data-cta="Get raise-ready"><h3>Readiness</h3><p>A dedicated investment-readiness track with Frontier Access, so you can walk into a raise prepared.</p></div>
+          <div class="slide" data-cta="Meet investors"><h3>Meet the right people</h3><p>Demo day puts you in front of investors and partners who are there to look.</p></div>
+          <div class="slide" data-cta="Join the community"><h3>A community that stays</h3><p>You join the For Creative Girls network, women who have been building alongside each other since 2017, and you do not leave it when the six weeks end.</p></div>
+        </div>
+        <div class="ctrl"><div class="prog"></div><div class="arrows"><button class="arr" data-prev aria-label="Previous"><svg><use href="#left"/></svg></button><button class="arr" data-next aria-label="Next"><svg><use href="#right"/></svg></button></div></div>
+      </div>
+      <button class="btn btn-k btn-sm" data-apply id="moneycta">Meet your mentors</button>
+    </div>
+  </div>
+</section>
+
+<!-- Award and demo day -->
+<section class="what cream">
+  <div class="wrap split">
+    <div class="txt">
+      <div class="eyebrow"><svg style="color:#141416"><use href="#spark"/></svg>The award and demo day</div>
+      <h2 class="big" style="margin-bottom:24px">The <span class="script ol">strongest</span> five are backed. Everyone leaves in the room.</h2>
+      <p>Scaffold takes in up to twenty women. At the end of the six weeks, we name the five strongest founders, and we are raising a grant pool to back them, given with no equity and no claim on your company. Every founder in the cohort pitches on demo day, in front of investors and partners who came to look. That is the real prize: the chance to be seen, and backed, by the people who can fund what comes next.</p>
+    </div>
+    <div>
+      <div class="stack" data-stack="award" data-imgs="aw1,aw2,aw3,aw4,aw5">
+        <span class="bub">Demo day</span>
+        <span class="tg tag"><svg><use href="#mic"/></svg>On stage</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Who is behind it -->
+<section class="behind">
+  <div class="wrap g">
+    <div>
+      <div class="eyebrow" style="color:#fcfcfc"><svg style="color:#fff"><use href="#spark"/></svg>Who is behind it</div>
+      <h2 class="big">For <span class="script y">Creative</span> Girls!</h2>
+    </div>
+    <div>
+      <p class="lead">Scaffold is run by <span class="script">For Creative Girls</span>, a community that has backed women in creative fields since 2017. In that time we have delivered more than a thousand mentoring sessions, mentored 180 women one to one, seen seventy percent of them move into jobs, placements, or shown work, and grown a community of more than ten thousand across fifteen countries.</p>
+      <div class="pics">
+        <div><img src="img/beh1.jpg" alt=""><p>This is our sourcing advantage. When a founder struggles to find credible women builders in this space, our community is the answer.</p></div>
+        <div><img src="img/beh2.jpg" alt=""><p>The readiness track is run with Frontier Access which prepares founders to raise. Scaffold founders arrive on demo day ready, not raw.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Key dates -->
+<section class="dates" id="dates">
+  <div class="wrap g">
+    <div>
+      <h2 class="big">The first <span class="script y">cohort</span><br>runs in early 2027.</h2>
+      <img src="img/kd.jpg" alt="">
+    </div>
+    <ol class="rows" style="margin-top:20px">
+      <li><span class="n">1</span><span class="t">Applications open</span><span class="d"><svg><use href="#cal"/></svg>January 2027</span></li>
+      <li><span class="n">2</span><span class="t">Applications close</span><span class="d"><svg><use href="#cal"/></svg>late January 2027</span></li>
+      <li><span class="n">3</span><span class="t">Cohort begins</span><span class="d"><svg><use href="#cal"/></svg>22 February 2027</span></li>
+      <li><span class="n">4</span><span class="t">Pitch day</span><span class="d"><svg><use href="#cal"/></svg>early April 2027</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq cream" id="faq">
+  <div class="wrap g">
+    <div>
+      <div class="eyebrow"><svg style="color:#141416"><use href="#spark"/></svg>FAQ</div>
+      <h2 class="big">What you might be wondering</h2>
+    </div>
+    <div class="acc" id="acc">
+      <div class="qa open"><button aria-expanded="true">Does it cost anything to take part?<span class="ic"></span></button><div class="ans"><div><p>No. Scaffold is free for the women selected. We are funded by partners, not by the founders.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false">Do I need to have raised money already?<span class="ic"></span></button><div class="ans"><div><p>No. Many of our founders have never raised. You need a product you are building, not a funding history.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false">Do you take equity?<span class="ic"></span></button><div class="ans"><div><p>No. The grants are given with no equity and no claim on your company.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false">Is it in person or online?<span class="ic"></span></button><div class="ans"><div><p>The programme runs online, so you can take part from wherever you are. Demo day is hybrid, bringing the cohort together in person and online.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false">How much time will it take?<span class="ic"></span></button><div class="ans"><div><p>Plan for a meaningful weekly commitment across the six weeks, including sessions, your own build time, and testing with users. It is intensive by design.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false">What happens after the six weeks?<span class="ic"></span></button><div class="ans"><div><p>You keep the work, the readiness, the relationships, and your place in the For Creative Girls community. The strongest founders are backed, and demo day opens doors that outlast the programme.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false">Who can I talk to before applying?<span class="ic"></span></button><div class="ans"><div><p>Email creative@forcreativegirls.com and we will point you in the right direction.</p></div></div></div>
+    </div>
+    <div class="help">
+      <p>Still have questions?<br>Our team is here to help</p>
+      <button class="btn btn-k btn-sm" id="emailus">Email us</button>
+      <small id="emailnote"></small>
+    </div>
+  </div>
+</section>
+
+<!-- Partners -->
+<section class="partners" id="partners">
+  <div class="wrap">
+    <div class="eyebrow"><svg style="color:#fff"><use href="#spark"/></svg>For partners and investors</div>
+    <h2>Back the <span class="script y">women</span> building what comes next</h2>
+    <p>Scaffold runs on partnership. If you want to fund the grant pool, bring expertise or mentors, open your network, or simply come to demo day to meet the founders, there is a place for you. Every form of support is tied to named founders and real outcomes, never a logo on a page.</p>
+    <button class="btn btn-p" data-partner>Partner with us</button>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta cream">
+  <div class="wrap g">
+    <img class="globe" src="img/globe.png" alt="Photos of women founders arranged around a dotted globe">
+    <div>
+      <h2 class="big">You have already started. Let us <span class="script ol">build</span> around you.</h2>
+      <p>Twenty places. Six weeks. A pitch in front of people who can back you. If you are a woman building for the creative economy, this is your room.</p>
+      <button class="btn btn-p" data-apply>Apply for Scaffold</button>
+      <small>Free to take part. Applications open January 2027. The cohort begins 22 February 2027.</small>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap g">
+    <p class="about">Discover female creatives and their amazingness. For Creative Girls is a semi-educational platform for creative women to share insights about their creative processes (how they get things done and how they execute ideas), the way they get inspiration for their work and how to be profitable.</p>
+    <div><h4>Info</h4><ul><li>Mentorship 2026</li><li>Support Our Impact</li><li>Career Lab</li><li>About Us</li><li>Insights/Trend</li><li>Resources</li></ul></div>
+    <div><h4>Social</h4><ul><li>X (formerly Twitter)</li><li>Facebook</li><li>Instagram</li><li>Pinterest</li><li>LinkedIn</li><li>Google</li><li>Sound Cloud</li></ul></div>
+  </div>
+  <p class="copy wrap">© 2026 For Creative Girls.</p>
+</footer>
+</div>
+
+<!-- ================= APPLY ================= -->
+<div class="view ap" id="v-apply" hidden>
+  <div class="ap-bar"><div class="wrap">
+    <a class="wm" href="#home" data-home><b>Scaffold</b><span>A programme by For Creative Girls</span></a>
+    <a class="back" href="#home" data-home><svg><use href="#arrowl"/></svg>Back to the Scaffold page</a>
+  </div></div>
+
+  <div class="wrap ap-main" id="ap-form">
+    <aside class="ap-side">
+      <div class="eyebrow" style="font-size:14px"><svg style="color:#141416"><use href="#spark"/></svg>Applications for the first cohort</div>
+      <h1>Tell us what you are <span class="script ol">building</span>.</h1>
+      <p class="intro">Three short steps, about 15 minutes. Twenty women join the first cohort, which runs for six weeks from 22 February 2027.</p>
+      <ol class="steps" id="steps">
+        <li><span class="num">1</span><div><b>About you</b><small>Who you are and where you are based</small></div></li>
+        <li><span class="num">2</span><div><b>Your product</b><small>What you are building and how far along it is</small></div></li>
+        <li><span class="num">3</span><div><b>Fit and commitment</b><small>Why Scaffold, and the six weeks ahead</small></div></li>
+      </ol>
+      <div class="ap-info">Applications close late January 2027.<br>Questions? <a href="mailto:scaffold@forcreativegirls.com">scaffold@forcreativegirls.com</a></div>
+    </aside>
+
+    <form class="card" id="apform" novalidate>
+      <div class="bars"><b id="stepof">Step 1 of 3</b><span id="stepnext">Next: Your product</span></div>
+      <div class="bar3"><i></i><i></i><i></i></div>
+
+      <!-- Step 1 -->
+      <div class="pane" data-step="1">
+        <h2>About you</h2>
+        <p class="lead">So we know who you are and how to reach you.</p>
+        <div class="fs">
+          <div class="f"><label for="a-name">Full name <em>*</em></label><input class="in" id="a-name" placeholder="Ngozi Adeyemi" required></div>
+          <div class="row2">
+            <div class="f"><label for="a-email">Email address <em>*</em></label><input class="in" id="a-email" type="email" placeholder="ngozi@studio.com" required></div>
+            <div class="f"><label for="a-phone">Phone or WhatsApp number <em>*</em></label><input class="in" id="a-phone" placeholder="+234 801 234 5678" required></div>
+          </div>
+          <div class="row2">
+            <div class="f"><label for="a-country">Country of residence <em>*</em></label>
+              <select class="sel" id="a-country" required><option value="" disabled selected>Select your country</option><option>Nigeria</option><option>Ghana</option><option>Kenya</option><option>South Africa</option><option>Egypt</option><option>Morocco</option><option>Rwanda</option><option>United Kingdom</option><option>France</option><option>Germany</option><option>United Arab Emirates</option><option>Other country in Europe, the Middle East or Africa</option></select>
+              <div class="hintx">Open to women based in Europe, the Middle East and Africa.</div></div>
+            <div class="f"><label for="a-city">City <em>*</em></label><input class="in" id="a-city" placeholder="Lagos" required></div>
+          </div>
+          <div class="f"><label for="a-link">LinkedIn or portfolio link <em>*</em></label><div class="wi"><svg><use href="#link"/></svg><input class="in" id="a-link" placeholder="linkedin.com/in/yourname or your website" required></div></div>
+          <div class="f"><label for="a-heard">How did you hear about Scaffold? <em>*</em></label>
+            <select class="sel" id="a-heard" required><option value="" disabled selected>Select one</option><option>Instagram</option><option>LinkedIn</option><option>X (formerly Twitter)</option><option>The For Creative Girls community</option><option>A friend or colleague</option><option>An event</option><option>Other</option></select></div>
+        </div>
+        <div class="cf"><small>Fields marked * are required</small><button type="button" class="btn btn-p" data-go="2">Continue <svg width="16" height="16"><use href="#arrowr"/></svg></button></div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="pane" data-step="2" hidden>
+        <h2>Your product</h2>
+        <p class="lead">Tell us about what you are building and how far along it is.</p>
+        <div class="fs">
+          <div class="row2">
+            <div class="f"><label for="p-name">Product or venture name <em>*</em></label><input class="in" id="p-name" placeholder="e.g. Threadline"></div>
+            <div class="f"><label for="p-web">Website or product link <i>(optional)</i></label><div class="wi"><svg><use href="#link"/></svg><input class="in" id="p-web" placeholder="https://"></div></div>
+          </div>
+          <div class="f"><label for="p-one">Describe your product in one sentence <em>*</em></label><input class="in" id="p-one" placeholder="e.g. A booking app that helps independent stylists fill their week."><div class="hintx">Keep it short and plain, as you would say it to a friend.</div></div>
+          <div class="f"><label for="p-sector">Creative sector <em>*</em></label>
+            <select class="sel" id="p-sector" required><option value="" disabled selected>Select a sector</option><option>Fashion and beauty</option><option>Music and audio</option><option>Film, video and animation</option><option>Design and visual art</option><option>Publishing and writing</option><option>Gaming</option><option>Photography</option><option>Creator economy and media</option><option>Other</option></select></div>
+          <div class="f"><span class="lb">Stage <em>*</em></span>
+            <div class="pills"><label class="pill"><input type="radio" name="stage" id="st1">Idea</label><label class="pill"><input type="radio" name="stage" id="st2">Prototype</label><label class="pill"><input type="radio" name="stage" id="st3">Launched with users</label><label class="pill"><input type="radio" name="stage" id="st4">Generating revenue</label></div></div>
+          <div class="f"><span class="lb">Founding team <em>*</em></span>
+            <div class="opt2"><label class="opt"><input type="radio" name="team" id="tm1"><span><b>Solo founder</b><small>Just me, for now</small></span></label><label class="opt"><input type="radio" name="team" id="tm2"><span><b>Co-founders</b><small>Two or more of us</small></span></label></div></div>
+          <label class="chk"><input type="checkbox" id="p-woman"><span>I confirm this venture is founded or co-founded by a woman <em>*</em></span></label>
+          <div class="f"><label for="p-trac">Traction so far <i>(optional)</i></label><textarea class="ta" id="p-trac" placeholder="e.g. 300 monthly users, first paying customers, a pilot with a fashion week"></textarea><div class="hintx">Users, revenue range or partnerships. Early is fine.</div></div>
+        </div>
+        <div class="cf"><button type="button" class="btn btn-o" data-go="1"><svg width="16" height="16"><use href="#arrowl"/></svg>Back</button><button type="button" class="btn btn-p" data-go="3">Continue <svg width="16" height="16"><use href="#arrowr"/></svg></button></div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="pane" data-step="3" hidden>
+        <h2>Fit and commitment</h2>
+        <p class="lead">Short answers are fine. We care more about clear thinking than polished writing.</p>
+        <div class="fs">
+          <div class="f"><label for="q1">What problem are you solving, and for whom? <em>*</em></label><textarea class="ta" id="q1" data-max="150" placeholder="Who has this problem, and what does it cost them today?"></textarea><div class="hintx"><span></span><span class="wc">0 / 150 words</span></div></div>
+          <div class="f"><label for="q2">What is the biggest challenge facing your product right now? <em>*</em></label><textarea class="ta" id="q2" data-max="150" placeholder="Be honest. This helps us match you with the right mentors."></textarea><div class="hintx"><span></span><span class="wc">0 / 150 words</span></div></div>
+          <div class="f"><label for="q3">How would you use a $1,500 award? <em>*</em></label><textarea class="ta" id="q3" data-max="100" placeholder="e.g. Ten user interviews and a paid test of our booking flow"></textarea><div class="hintx"><span></span><span class="wc">0 / 100 words</span></div></div>
+          <div class="f"><label for="q4">What do you hope to get from the six weeks? <em>*</em></label><textarea class="ta" id="q4" data-max="100" placeholder="What would make the six weeks worth it for you?"></textarea><div class="hintx"><span></span><span class="wc">0 / 100 words</span></div></div>
+          <div class="f"><span class="lb">Pitch deck or one-minute video <i>(optional)</i></span>
+            <label class="drop" for="deck"><span id="deckname">Drag your pitch deck here, or <u>browse</u></span><small>PDF, up to 10 MB</small></label><input type="file" id="deck" accept="application/pdf" hidden>
+            <div class="or">or</div>
+            <div class="wi"><svg><use href="#link"/></svg><input class="in" id="video" placeholder="Paste a link to a one-minute video (YouTube, Vimeo, Loom)"></div></div>
+          <label class="chk"><input type="checkbox" id="c1"><span>I can join the weekly online sessions and the demo day <em>*</em></span></label>
+          <label class="chk"><input type="checkbox" id="c2"><span>I agree to the programme terms and privacy policy <em>*</em></span></label>
+          <label class="chk"><input type="checkbox" id="c3"><span>Keep me posted about other opportunities from For Creative Girls</span></label>
+        </div>
+        <div class="cf"><button type="button" class="btn btn-o" data-go="2"><svg width="16" height="16"><use href="#arrowl"/></svg>Back</button><button type="button" class="btn btn-p" data-go="sent">Submit application <svg width="16" height="16"><use href="#arrowr"/></svg></button></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="wrap" id="ap-sent" hidden style="padding-block:80px 120px">
+    <div class="card sent">
+      <div class="ok"><svg width="24" height="24"><use href="#tick"/></svg></div>
+      <h1>Thank you for applying.</h1>
+      <p class="lead">Your application is in. We have emailed you a copy of your answers, so you have them for your records.</p>
+      <h2 style="font-size:18px">What happens next</h2>
+      <ol class="next">
+        <li><span class="num">1</span><div><b>We read every application</b><small>Applications close late January 2027.</small></div></li>
+        <li><span class="num">2</span><div><b>We get in touch</b><small>Shortlisted founders hear from us before the cohort starts.</small></div></li>
+        <li><span class="num">3</span><div><b>The six weeks begin</b><small>The first cohort starts on 22 February 2027.</small></div></li>
+      </ol>
+      <a class="btn btn-p btn-sm" href="#home" data-home style="text-decoration:none">Back to the Scaffold page</a>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PARTNER MODAL ================= -->
+<div class="ov" id="ov" aria-hidden="true">
+  <div class="md" role="dialog" aria-modal="true" aria-labelledby="pm-t">
+    <button class="x" data-close aria-label="Close"><svg><use href="#close"/></svg></button>
+    <div id="pm-form">
+      <div class="mh"><h2 id="pm-t">Partner with Scaffold</h2>
+      <p class="lead">Tell us who you are and how you would like to help. We read every message.</p></div>
+      <div class="mb" id="pm-body"><div class="fs">
+        <div class="row2">
+          <div class="f"><label for="m-name">Full name <em>*</em></label><input class="in" id="m-name" placeholder="Ngozi Adeyemi"></div>
+          <div class="f"><label for="m-email">Email address <em>*</em></label><input class="in" id="m-email" placeholder="ngozi@fund.com"></div>
+        </div>
+        <div class="row2">
+          <div class="f"><label for="m-org">Organisation name <em>*</em></label><input class="in" id="m-org" placeholder="Company, fund or foundation"></div>
+          <div class="f"><label for="m-role">Role or title <em>*</em></label><input class="in" id="m-role" placeholder="e.g. Partnerships lead"></div>
+        </div>
+        <div class="f"><label for="m-web">Organisation website <i>(optional)</i></label><div class="wi"><svg><use href="#link"/></svg><input class="in" id="m-web" placeholder="https://"></div></div>
+        <div class="f"><span class="lb">How would you like to partner? <em>*</em></span>
+          <div class="pills">
+            <label class="pill"><input type="checkbox" id="pt1">Funding founder awards</label><label class="pill"><input type="checkbox" id="pt2">Sponsorship</label><label class="pill"><input type="checkbox" id="pt3">Mentorship or facilitation</label><label class="pill"><input type="checkbox" id="pt4">Investor or demo day participation</label><label class="pill"><input type="checkbox" id="pt5">In-kind services</label><label class="pill"><input type="checkbox" id="pt6">Community or distribution</label><label class="pill"><input type="checkbox" id="pt7">Other</label>
+          </div></div>
+        <div class="f"><label for="m-msg">Tell us a little about your organisation and what you have in mind <em>*</em></label><textarea class="ta" id="m-msg" placeholder="What you do, and the kind of support you are thinking about"></textarea></div>
+        <div class="f"><label for="m-heard">How did you hear about Scaffold? <em>*</em></label>
+          <select class="sel" id="m-heard" required><option value="" disabled selected>Select one</option><option>LinkedIn</option><option>Instagram</option><option>The For Creative Girls community</option><option>A friend or colleague</option><option>An event</option><option>Other</option></select></div>
+      </div>
+      </div>
+      <div class="mf"><div><small>Prefer to talk first?</small><b>scaffold@forcreativegirls.com</b></div><button class="btn btn-p" id="pm-send">Send to the team <svg width="16" height="16"><use href="#arrowr"/></svg></button></div>
+    </div>
+    <div class="done" id="pm-done" hidden>
+      <div class="ok"><svg width="24" height="24"><use href="#tick"/></svg></div>
+      <h2>Thank you. Your message is with the team.</h2>
+      <p class="lead" style="margin:10px auto 26px;max-width:420px">The partnerships team will get back to you by email.</p>
+      <button class="btn btn-p btn-sm" data-close>Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- views (home / apply) ---------- */
+  function show(){
+    var h=location.hash.replace('#','');
+    var apply = h==='apply';
+    $('#v-home').hidden = apply; $('#v-apply').hidden = !apply;
+    if(apply){ setStep(1); window.scrollTo(0,0); }
+    else if(h && document.getElementById(h)){ document.getElementById(h).scrollIntoView(); }
+  }
+  window.addEventListener('hashchange', show);
+  $$('[data-apply]').forEach(function(b){ b.addEventListener('click', function(){ location.hash='apply'; }); });
+  $$('[data-home]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); location.hash='home'; window.scrollTo(0,0); }); });
+  $$('[data-scroll]').forEach(function(b){ b.addEventListener('click', function(){ document.getElementById(b.dataset.scroll).scrollIntoView({behavior: reduce?'auto':'smooth'}); }); });
+  $$('.fcg nav a').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); }); });
+
+  /* ---------- fan carousels ---------- */
+  var FANS={
+    moment:{imgs:['mom1','mom2','mom3','mom4','mom5'],tags:[['Rebuilding the tools',''],['Getting work seen','lime'],['Almost no capital','lilac'],['Often on a laptop','lilac'],['Getting creatives paid','lime']]},
+    money:{imgs:['mon1','mon2','mon3','mon4','mon5'],tags:[['Rebuilding the tools','lime'],['Getting work seen','lime'],['Almost no capital','lilac'],['Often on a laptop','lilac'],['Getting creatives paid','lime']]}
+  };
+  var fanApi={};
+  Object.keys(FANS).forEach(function(k){
+    var cfg=FANS[k], box=$('[data-fan="'+k+'"]'), dots=$('[data-dots="'+k+'"]'), n=cfg.imgs.length, cur=0, cards=[];
+    cfg.imgs.forEach(function(src,i){
+      var c=document.createElement('div'); c.className='c';
+      c.innerHTML='<img src="img/'+src+'.jpg" alt=""><span class="tag '+cfg.tags[i][1]+'"><svg><use href="#wrench"/></svg>'+cfg.tags[i][0]+'</span>';
+      c.addEventListener('click', function(){ go(i); onUser(); });
+      box.appendChild(c); cards.push(c);
+      var d=document.createElement('button'); d.setAttribute('aria-label','Photo '+(i+1)); d.addEventListener('click',function(){ go(i); onUser(); }); dots.appendChild(d);
+    });
+    var ds=$$('button',dots);
+    function go(i){ cur=(i+n)%n; cards.forEach(function(c,j){ var p=(j-cur+n)%n; c.className='c p'+p; }); ds.forEach(function(d,j){ d.classList.toggle('on', j===cur); }); }
+    var timer=null; function auto(){ if(reduce) return; clearInterval(timer); timer=setInterval(function(){ go(cur+1); }, 3800); }
+    function onUser(){ auto(); }
+    box.addEventListener('mouseenter',function(){ clearInterval(timer); }); box.addEventListener('mouseleave', auto);
+    go(0); auto();
+    fanApi[k]={go:function(i){ go(i); auto(); }, get:function(){return cur;}};
+  });
+
+  /* ---------- text panels with arrows ---------- */
+  $$('[data-panel]').forEach(function(p){
+    var key=p.dataset.panel, slides=$$('.slide',p), n=slides.length, i=0, prog=$('.prog',p), prev=$('[data-prev]',p), next=$('[data-next]',p);
+    for(var k=0;k<n;k++){ prog.appendChild(document.createElement('i')); }
+    var bars=$$('i',prog);
+    function set(j){ var dir=j>i?1:-1; i=Math.max(0,Math.min(n-1,j)); slides.forEach(function(s,k){ s.classList.toggle('on',k===i); }); bars.forEach(function(b,k){ b.classList.toggle('on',k===i); }); prev.disabled=i===0; next.disabled=i===n-1;
+      if(key==='money'){ $('#moneycta').textContent=slides[i].dataset.cta; fanApi.money.go(i); }
+      else if(fanApi[key]){ fanApi[key].go(fanApi[key].get()+dir); }
+    }
+    prev.addEventListener('click',function(){ set(i-1); }); next.addEventListener('click',function(){ set(i+1); });
+    i=0; slides.forEach(function(s,k){ s.classList.toggle('on',k===0); }); bars[0].classList.add('on'); prev.disabled=true; next.disabled=n<2;
+  });
+
+  /* ---------- tilted photo stacks (swipe) ---------- */
+  var POS=[{x:0,y:0,r:0,s:1,o:1},{x:14,y:-46,r:4,s:.92,o:1},{x:-10,y:44,r:-5,s:.9,o:1},{x:26,y:-80,r:7,s:.84,o:.9},{x:-20,y:82,r:-8,s:.8,o:.85}];
+  $$('[data-stack]').forEach(function(st){
+    var imgs=st.dataset.imgs.split(','), n=imgs.length, order=[], els=[];
+    imgs.forEach(function(src,i){ var d=document.createElement('div'); d.className='s'; d.innerHTML='<img src="img/'+src+'.jpg" alt="" draggable="false">'; st.insertBefore(d, st.firstChild); els.push(d); order.push(i); });
+    function lay(dx){ order.forEach(function(idx,p){ var e=els[idx], q=POS[p]||POS[n-1]; var extra=(p===0&&dx)?' translateX('+dx+'px) rotate('+(dx/20)+'deg)':''; e.style.zIndex=10-p; e.style.opacity=q.o; e.style.transform='translate(-50%,-50%) translate('+q.x+'px,'+q.y+'px) rotate('+q.r+'deg) scale('+q.s+')'+extra; e.style.transition=dx?'none':''; }); }
+    function cycle(dir){ var front=els[order[0]]; front.style.transition='transform .35s ease-in, opacity .35s'; front.style.transform='translate(-50%,-50%) translateX('+(dir*420)+'px) rotate('+(dir*18)+'deg)'; front.style.opacity='0';
+      setTimeout(function(){ order.push(order.shift()); front.style.transition='none'; lay(0); requestAnimationFrame(function(){ requestAnimationFrame(function(){ front.style.transition=''; }); }); }, 330); }
+    var sx=null, dx=0, moved=false;
+    st.addEventListener('pointerdown',function(e){ if(!e.target.closest('.s')) return; sx=e.clientX; dx=0; moved=false; st.setPointerCapture(e.pointerId); stop(); });
+    st.addEventListener('pointermove',function(e){ if(sx===null) return; dx=e.clientX-sx; if(Math.abs(dx)>4) moved=true; lay(dx); });
+    function end(){ if(sx===null) return; sx=null; if(Math.abs(dx)>70) cycle(dx>0?1:-1); else if(!moved) cycle(1); else lay(0); dx=0; start(); }
+    st.addEventListener('pointerup',end); st.addEventListener('pointercancel',function(){ sx=null; lay(0); });
+    var t=null; function start(){ if(reduce) return; clearInterval(t); t=setInterval(function(){ cycle(1); }, 4200); } function stop(){ clearInterval(t); }
+    st.addEventListener('mouseenter',stop); st.addEventListener('mouseleave',start);
+    lay(0); start();
+  });
+
+  /* ---------- criteria hover ---------- */
+  var cc=$$('.cc'), crit=$('#crit');
+  function act(i){ cc.forEach(function(c,j){ c.classList.toggle('on',j===i); }); }
+  cc.forEach(function(c,i){ c.addEventListener('mouseenter',function(){ act(i); }); c.addEventListener('focus',function(){ act(i); }); c.addEventListener('click',function(){ act(i); }); });
+  crit.addEventListener('mouseleave',function(){ act(0); });
+
+  /* ---------- how it works track ---------- */
+  var track=$('#track'), cardsH=$$('.hc',track), hp=$('#howprog'), hprev=$('#howprev'), hnext=$('#hownext');
+  cardsH.forEach(function(){ hp.appendChild(document.createElement('i')); }); var hb=$$('i',hp);
+  function step(){ return cardsH[1].offsetLeft-cardsH[0].offsetLeft; }
+  function upd(){ var i=Math.round(track.scrollLeft/step()); var max=track.scrollWidth-track.clientWidth; hb.forEach(function(b,k){ b.classList.toggle('on',k===i); }); hprev.disabled=track.scrollLeft<4; hnext.disabled=track.scrollLeft>=max-4; }
+  hprev.addEventListener('click',function(){ track.scrollBy({left:-step(),behavior:reduce?'auto':'smooth'}); });
+  hnext.addEventListener('click',function(){ track.scrollBy({left:step(),behavior:reduce?'auto':'smooth'}); });
+  track.addEventListener('scroll',function(){ window.requestAnimationFrame(upd); }); window.addEventListener('resize',upd); upd();
+
+  /* ---------- FAQ accordion ---------- */
+  $$('.qa').forEach(function(q){ $('button',q).addEventListener('click',function(){ var open=!q.classList.contains('open'); $$('.qa').forEach(function(o){ o.classList.remove('open'); $('button',o).setAttribute('aria-expanded','false'); }); if(open){ q.classList.add('open'); this.setAttribute('aria-expanded','true'); } }); });
+
+  /* ---------- toast + email ---------- */
+  var toastEl=$('#toast'), tt; function toast(m){ toastEl.textContent=m; toastEl.classList.add('on'); clearTimeout(tt); tt=setTimeout(function(){ toastEl.classList.remove('on'); },2600); }
+  $('#emailus').addEventListener('click',function(){ var em='creative@forcreativegirls.com'; $('#emailnote').textContent=em; try{ navigator.clipboard.writeText(em).then(function(){ toast('Email address copied'); },function(){}); }catch(e){} });
+
+  /* ---------- partner modal ---------- */
+  var ov=$('#ov');
+  function openM(){ $('#pm-form').hidden=false; $('#pm-done').hidden=true; $('#pm-body').scrollTop=0; ov.classList.add('on'); ov.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; setTimeout(function(){ $('#m-name').focus({preventScroll:true}); },200); }
+  function closeM(){ ov.classList.remove('on'); ov.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+  $$('[data-partner]').forEach(function(b){ b.addEventListener('click',openM); });
+  $$('[data-close]').forEach(function(b){ b.addEventListener('click',closeM); });
+  ov.addEventListener('click',function(e){ if(e.target===ov) closeM(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeM(); });
+  $('#pm-send').addEventListener('click',function(){ $('#pm-form').hidden=true; $('#pm-done').hidden=false; ov.scrollTop=0; });
+
+  /* ---------- apply steps ---------- */
+  var NEXT={1:'Next: Your product',2:'Next: Fit and commitment',3:'Last step'};
+  function setStep(s){
+    var sent = s==='sent';
+    $('#ap-form').hidden=sent; $('#ap-sent').hidden=!sent;
+    if(!sent){
+      $$('.pane').forEach(function(p){ p.hidden = p.dataset.step!=String(s); });
+      $('#stepof').textContent='Step '+s+' of 3'; $('#stepnext').textContent=NEXT[s];
+      $$('.bar3 i').forEach(function(b,k){ b.classList.toggle('on',k<s); });
+      $$('#steps li').forEach(function(li,k){ li.className = k+1<s?'done':(k+1==s?'cur':''); $('.num',li).innerHTML = k+1<s?'<svg width="14" height="14"><use href="#tick"/></svg>':String(k+1); });
+    }
+    window.scrollTo(0,0);
+  }
+  $$('[data-go]').forEach(function(b){ b.addEventListener('click',function(){ setStep(b.dataset.go==='sent'?'sent':Number(b.dataset.go)); }); });
+  $$('textarea[data-max]').forEach(function(t){ var wc=$('.wc',t.parentNode); t.addEventListener('input',function(){ var w=t.value.trim()?t.value.trim().split(/\s+/).length:0; wc.textContent=w+' / '+t.dataset.max+' words'; wc.style.color=w>Number(t.dataset.max)?'var(--red)':''; }); });
+  $('#deck').addEventListener('change',function(){ if(this.files[0]) $('#deckname').innerHTML='Attached: <u>'+this.files[0].name.replace(/[<>&]/g,'')+'</u>'; });
+  $('#apform').addEventListener('submit',function(e){ e.preventDefault(); });
+
+
+  /* ---------- globe: photos circling the dotted globe ---------- */
+  (function(){
+    var g=document.getElementById('globe'); if(!g) return;
+    // rings measured from the Figma frame (840 x 720): centre y, radius, front card size, tilt
+    var RINGS=[{y:200,r:225,w:83,h:92,tilt:18,n:8,speed:1},{y:405,r:305,w:99,h:129,tilt:42,n:10,speed:-0.8},{y:595,r:250,w:79,h:72,tilt:28,n:8,speed:1.15}];
+    var cards=[], k=0;
+    RINGS.forEach(function(R,ri){ for(var i=0;i<R.n;i++){ var el=document.createElement('div'); el.className='gc'; el.innerHTML='<img src="img/gl'+((k%9)+1)+'.jpg" alt="">'; g.appendChild(el); cards.push({el:el,R:R,a:(i/R.n)*Math.PI*2+ri*0.4}); k++; } });
+    var t0=null;
+    function frame(ts){
+      if(t0===null) t0=ts; var dt=(ts-t0)/1000; t0=ts;
+      var sc=g.clientWidth/840;
+      cards.forEach(function(c){
+        var R=c.R; c.a+=dt*0.12*R.speed;
+        var sn=Math.sin(c.a), cs=Math.cos(c.a);
+        var vis=Math.max(0,cs), w=Math.max(4,R.w*Math.max(.14,vis)), h=R.h*(0.82+0.18*vis);
+        var x=420+R.r*sn, y=R.y;
+        c.el.style.width=(w*sc)+'px'; c.el.style.height=(h*sc)+'px';
+        c.el.style.transform='translate('+((x-w/2)*sc)+'px,'+((y-h/2)*sc)+'px) rotate('+(-R.tilt*sn)+'deg)';
+        c.el.style.opacity=cs<0.02?0:Math.min(1,cs*3);
+        c.el.style.zIndex=Math.round(cs*100)+100;
+      });
+      if(!reduce) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  show();
+})();
+</script>
+
+</body>
+</html>
