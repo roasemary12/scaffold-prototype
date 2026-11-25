@@ -76,9 +76,10 @@ section{position:relative}
 @media (max-width:600px){.banner{height:110px}.banner .word{font-size:44px}.banner .sp{display:none}}
 
 /* Hero */
-.hero{min-height:836px;color:#fff;display:flex;align-items:flex-end;background:#222 url(img/hero.jpg) center/cover no-repeat}
-.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.5) 50%,rgba(0,0,0,.72) 100%)}
-.hero .wrap{position:relative;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end;padding-block:0 112px}
+.hero{min-height:836px;color:#fff;display:flex;align-items:flex-end;background:#222 url(img/hero-poster.jpg) center/cover no-repeat;overflow:hidden}
+.hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.5) 50%,rgba(0,0,0,.72) 100%)}
+.hero .wrap{position:relative;z-index:2;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end;padding-block:0 112px}
 .hero .ey{display:flex;align-items:center;gap:8px;color:var(--yellow);font-size:14px;margin-bottom:6px}
 .hero h1{font-size:clamp(38px,4vw,48px);line-height:1.12;letter-spacing:-.02em;font-weight:400}
 .hero h2{font-size:clamp(28px,3vw,36px);font-weight:400;letter-spacing:-.02em;margin-bottom:12px}
@@ -487,6 +488,7 @@ section{position:relative}
 </div>
 
 <section class="hero">
+  <video class="hero-vid" autoplay muted loop playsinline preload="auto" poster="img/hero-poster.jpg" aria-hidden="true"><source src="img/hero.mp4" type="video/mp4"></video>
   <div class="wrap">
     <div>
       <div class="ey"><svg width="14" height="14" style="color:var(--yellow)"><use href="#spark"/></svg>A programme by For Creative Girls</div>
@@ -1066,6 +1068,7 @@ section{position:relative}
     requestAnimationFrame(frame);
   })();
 
+  var hv=document.querySelector('.hero-vid'); if(hv){ hv.muted=true; if(reduce){ hv.removeAttribute('autoplay'); hv.pause(); } else { var pp=hv.play(); if(pp&&pp.catch) pp.catch(function(){}); } }
   show();
 })();
 </script>
