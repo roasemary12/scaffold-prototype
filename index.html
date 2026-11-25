@@ -54,7 +54,7 @@ section{position:relative}
 .fcg .search{display:flex;align-items:center;width:250px;height:34px;border:1px solid #cfcfd4;border-radius:4px;padding:0 10px;justify-content:flex-end}
 .fcg nav{display:flex;align-items:center;justify-content:space-between;font-family:var(--fcg);font-weight:600;font-size:15px;padding-block:14px 22px;gap:16px}
 .fcg nav a{text-decoration:none;white-space:nowrap}
-.fcg .burger{width:24px;height:18px;display:flex;flex-direction:column;justify-content:space-between}
+.fcg .burger{width:24px;height:18px;display:flex;flex-direction:column;justify-content:space-between;padding:0}
 .fcg .burger i{display:block;height:2px;background:#141416;border-radius:2px}
 @media (max-width:900px){.fcg nav a{display:none}.fcg nav{justify-content:flex-end;padding-block:0 14px;margin-top:-34px}.fcg .search{display:none}}
 
@@ -372,6 +372,76 @@ section{position:relative}
 .md .done .ok{width:52px;height:52px;border-radius:50%;background:#f1e7fd;color:var(--purple);display:grid;place-items:center;margin:0 auto 18px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#141416;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .3s, transform .3s;z-index:200;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ===== Scaffold menu (opens from the menu icon) ===== */
+.mnav{position:fixed;inset:0;z-index:90;pointer-events:none}
+.mnav::before{content:"";position:absolute;inset:0;background:rgba(10,10,12,.55);opacity:0;transition:opacity .3s}
+.mnav.on{pointer-events:auto}.mnav.on::before{opacity:1}
+.mpanel{position:absolute;top:0;right:0;width:min(420px,100%);background:var(--cream);border-radius:0 0 20px 20px;padding:14px 16px 20px;transform:translateY(-104%);transition:transform .38s cubic-bezier(.2,.7,.2,1);box-shadow:0 20px 40px rgba(0,0,0,.18);max-height:100vh;overflow-y:auto}
+.mnav.on .mpanel{transform:none}
+.mtop{display:flex;justify-content:space-between;align-items:center;padding:4px 0 14px;border-bottom:1px solid #e7e1d4}
+.mtop .x2{width:36px;height:36px;display:grid;place-items:center}
+.mtop .x2 svg{width:18px;height:18px}
+.mlinks{display:flex;flex-direction:column;margin:4px 0 22px}
+.mlinks a{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #e7e1d4;font-size:19px;text-decoration:none;color:var(--ink)}
+.mlinks a svg{width:16px;height:16px;color:#8a8a92}
+.mpanel .btn{width:100%}
+@media (min-width:901px){.mpanel{right:max(16px,calc((100vw - 1280px)/2));top:12px;border-radius:20px}}
+
+/* ===== Phone layout (matches the Figma mobile frames) ===== */
+@media (max-width:900px){
+  .fcg{background:var(--cream);border-bottom:0}
+  .fcg .wrap{display:flex;align-items:center;justify-content:space-between;height:58px}
+  .fcg .top{padding:0}
+  .fcg .logo{width:70px}
+  .fcg nav{margin:0;padding:0}
+  .moment .split > div:first-child,.money .split > div:first-child{order:2}
+  .cta .globe{order:2}
+}
+@media (max-width:600px){
+  .banner{height:64px}
+  .banner .word{font-size:34px;gap:12px}
+  .banner .word svg{width:18px;height:18px}
+  .banner .tag .script{font-size:10px}
+  .banner .tag b{font-size:8px}
+  .banner .sp{display:block;top:26px!important;width:9px!important;height:9px!important}
+  .banner .sp:nth-of-type(2),.banner .sp:nth-of-type(4){display:none}
+  .banner .sp:nth-of-type(1){left:7%!important}.banner .sp:nth-of-type(3){right:7%!important}
+  .moment,.money,.what,.who,.how,.behind,.dates,.faq{padding-block:56px}
+  .partners{padding-block:80px}
+  .cta{padding-block:48px}
+  .how .head{margin-bottom:32px}
+  .hc{flex-basis:300px}
+  .hc .box{min-height:0}
+  .hc h3{font-size:20px}.hc p{font-size:15px}
+  .hc img{height:150px}
+  .moment .panel p{font-size:16px}
+  .panel{padding:20px}
+  .rows li{grid-template-columns:28px 1fr auto;row-gap:0;padding:18px 0}
+  .rows .t{font-size:15px}.rows .d{grid-column:auto;font-size:12px}
+  .rows .d svg{width:14px;height:14px}
+  .dates img{height:220px;margin-top:24px}
+  .faq .g{gap:28px}
+  .qa button{font-size:16px;padding:18px 12px}
+  .qa .ans p{padding:0 40px 16px 12px;font-size:14px}
+  .behind .lead{font-size:20px}
+  .behind .pics img{height:230px}
+  .foot{min-height:0;background-position:70% bottom;padding-block:56px 32px}
+  .foot .about{text-align:justify}
+  .stack{height:340px}
+  .ap-bar .wrap{height:64px}
+  .back .lg{display:none}
+  .back{font-size:13px}
+}
+.ap-info-m{display:none}
+@media (max-width:1000px){.ap-side .ap-info{display:none}.ap-info-m{display:block;border-top:0;margin-top:-12px;padding-top:0}}
+/* Who should apply on phones: both cards open, no hover swap */
+@media (max-width:860px){
+  .cc{height:auto;min-height:520px}
+  .cc .cin{position:relative;min-height:520px}
+  .cc::before{background:rgba(10,10,12,.72)!important}
+  .cc ul{max-height:none;opacity:1;margin-top:20px}
+}
 </style>
 </head>
 <body>
@@ -402,7 +472,7 @@ section{position:relative}
     </div>
     <nav aria-label="For Creative Girls">
       <a href="#v-home">2026 Mentorship</a><a href="#v-home">Donate to Us</a><a href="#v-home">Opportunities</a><a href="#v-home">Interviews</a><a href="#v-home">Creative Women &amp; Projects</a><a href="#v-home">Opinions &amp; Lessons</a><a href="#v-home">Business</a><a href="#v-home">About Us</a>
-      <span class="burger" aria-label="Menu"><i></i><i></i><i></i></span>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><i></i><i></i><i></i></button>
     </nav>
   </div>
 </header>
@@ -675,7 +745,7 @@ section{position:relative}
 <div class="view ap" id="v-apply" hidden>
   <div class="ap-bar"><div class="wrap">
     <a class="wm" href="#home" data-home><b>Scaffold</b><span>A programme by For Creative Girls</span></a>
-    <a class="back" href="#home" data-home><svg><use href="#arrowl"/></svg>Back to the Scaffold page</a>
+    <a class="back" href="#home" data-home><svg><use href="#arrowl"/></svg>Back<span class="lg">&nbsp;to the Scaffold page</span></a>
   </div></div>
 
   <div class="wrap ap-main" id="ap-form">
@@ -760,6 +830,7 @@ section{position:relative}
         <div class="cf"><button type="button" class="btn btn-o" data-go="2"><svg width="16" height="16"><use href="#arrowl"/></svg>Back</button><button type="button" class="btn btn-p" data-go="sent">Submit application <svg width="16" height="16"><use href="#arrowr"/></svg></button></div>
       </div>
     </form>
+    <div class="ap-info ap-info-m">Applications close late January 2027.<br>Questions? <a href="mailto:scaffold@forcreativegirls.com">scaffold@forcreativegirls.com</a></div>
   </div>
 
   <div class="wrap" id="ap-sent" hidden style="padding-block:80px 120px">
@@ -815,6 +886,21 @@ section{position:relative}
   </div>
 </div>
 
+
+<div class="mnav" id="mnav" aria-hidden="true">
+  <div class="mpanel" role="dialog" aria-label="Scaffold menu">
+    <div class="mtop"><a class="wm" href="#home" data-mclose><b>Scaffold</b><span>A programme by For Creative Girls</span></a><button class="x2" data-mclose aria-label="Close menu"><svg><use href="#close"/></svg></button></div>
+    <nav class="mlinks">
+      <a href="#what" data-to="what">What Scaffold is<svg><use href="#right"/></svg></a>
+      <a href="#who" data-to="who">Who should apply<svg><use href="#right"/></svg></a>
+      <a href="#how" data-to="how">How it works<svg><use href="#right"/></svg></a>
+      <a href="#dates" data-to="dates">Key dates<svg><use href="#right"/></svg></a>
+      <a href="#faq" data-to="faq">FAQ<svg><use href="#right"/></svg></a>
+      <a href="#partners" data-to="partners">Partners<svg><use href="#right"/></svg></a>
+    </nav>
+    <button class="btn btn-p" data-apply>Apply now</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -891,9 +977,21 @@ section{position:relative}
     lay(0); start();
   });
 
+
+  /* ---------- Scaffold menu ---------- */
+  var mnav=$('#mnav'), burger=$('#burger');
+  function mOpen(){ mnav.classList.add('on'); mnav.setAttribute('aria-hidden','false'); burger.setAttribute('aria-expanded','true'); }
+  function mClose(){ mnav.classList.remove('on'); mnav.setAttribute('aria-hidden','true'); burger.setAttribute('aria-expanded','false'); }
+  burger.addEventListener('click',mOpen);
+  mnav.addEventListener('click',function(e){ if(e.target===mnav) mClose(); });
+  $$('[data-mclose]').forEach(function(b){ b.addEventListener('click',function(e){ e.preventDefault(); mClose(); if(b.classList.contains('wm')) window.scrollTo(0,0); }); });
+  $$('[data-to]').forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); mClose(); var t=document.getElementById(a.dataset.to); setTimeout(function(){ t.scrollIntoView({behavior:reduce?'auto':'smooth'}); },200); }); });
+  $$('#mnav [data-apply]').forEach(function(b){ b.addEventListener('click',mClose); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') mClose(); });
+
   /* ---------- criteria hover ---------- */
   var cc=$$('.cc'), crit=$('#crit');
-  function act(i){ cc.forEach(function(c,j){ c.classList.toggle('on',j===i); }); }
+  function act(i){ if(window.matchMedia('(max-width:860px)').matches) return; cc.forEach(function(c,j){ c.classList.toggle('on',j===i); }); }
   cc.forEach(function(c,i){ c.addEventListener('mouseenter',function(){ act(i); }); c.addEventListener('focus',function(){ act(i); }); c.addEventListener('click',function(){ act(i); }); });
   crit.addEventListener('mouseleave',function(){ act(0); });
 
